@@ -1,0 +1,66 @@
+version: '3.8'
+
+services:
+  # MQTT Broker Master (Leader)
+  mosquitto-master:
+    image: eclipse-mosquitto:2.0
+    container_name: mosquitto-master
+    ports:
+      - "1883:1883"
+      - "9001:9001"
+    volumes:
+      - ./mosquitto/master/config:/mosquitto/config
+      - ./mosquitto/master/data:/mosquitto/data
+      - ./mosquitto/master/log:/mosquitto/log
+    networks:
+      - mqtt-cluster
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "mosquitto_pub -h localhost -t test -m 'health check' || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # MQTT Broker Slave 1 (Follower)
+  mosquitto-slave1:
+    image: eclipse-mosquitto:2.0
+    container_name: mosquitto-slave1
+    ports:
+      - "1884:1883"
+      - "9002:9001"
+    volumes:
+      - ./mosquitto/slave1/config:/mosquitto/config
+      - ./mosquitto/slave1/data:/mosquitto/data
+      - ./mosquitto/slave1/log:/mosquitto/log
+    networks:
+      - mqtt-cluster
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "mosquitto_pub -h localhost -t test -m 'health check' || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # MQTT Broker Slave 2 (Follower)
+  mosquitto-slave2:
+    image: eclipse-mosquitto:2.0
+    container_name: mosquitto-slave2
+    ports:
+      - "1885:1883"
+      - "9003:9001"
+    volumes:
+      - ./mosquitto/slave2/config:/mosquitto/config
+      - ./mosquitto/slave2/data:/mosquitto/data
+      - ./mosquitto/slave2/log:/mosquitto/log
+    networks:
+      - mqtt-cluster
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "mosquitto_pub -h localhost -t test -m 'health check' || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+networks:
+  mqtt-cluster:
+    driver: bridge
