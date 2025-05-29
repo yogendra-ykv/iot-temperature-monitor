@@ -53,7 +53,7 @@ This solution follows Clean Architecture principles with the following layers:
 
 ### 1. Clone Repository
 ```powershell
-git clone <your-repo-url>
+git clone https://github.com/yogendra-ykv/iot-temperature-monitor
 cd IoTTemperatureMonitoring
 ```
 
